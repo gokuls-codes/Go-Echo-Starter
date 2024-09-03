@@ -6,7 +6,7 @@ all: build
 build:
 	@echo "Building..."
 	@templ generate
-	@tailwindcss -i assets/css/input.css -o public/styles.css
+	@tailwindcss -i assets/css/input.css -o assets/css/styles.css
 	@go build -o main cmd/main.go
 
 # Run the application

@@ -1,0 +1,43 @@
+package components
+
+type InputProps struct {
+    ID          string
+    Name        string
+    Type        string
+    Placeholder string
+    Value       string
+    Required    bool
+    Disabled    bool
+    Error       string
+    ClassName string
+}
+
+func DefaultInputProps(id string, name string, placeholder string, inputType string, className string) *InputProps {
+    return &InputProps{
+        ID: id,
+        Name: name,
+        Type: inputType,
+        Placeholder: placeholder,
+        Disabled: false,
+        ClassName: className,
+    }
+}
+
+templ Input(props InputProps) {
+        <input
+            id={ props.ID }
+            name={ props.Name }
+            type={ props.Type }
+            class={ "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                templ.KV("border-red-500", props.Error != ""),
+                props.ClassName,
+            }
+            placeholder={ props.Placeholder }
+            value={ props.Value }
+            required?={ props.Required }
+            disabled?={ props.Disabled }
+        />
+        if props.Error != "" {
+            <p class="mt-2 text-sm text-red-500">{ props.Error }</p>
+        }
+}

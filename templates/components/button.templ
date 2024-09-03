@@ -1,0 +1,94 @@
+package components
+
+import (
+    "strings"
+)
+
+type ButtonProps struct {
+    Variant   string
+    Size      string
+    ClassName string
+    Disabled  bool
+    Type string
+}
+
+func (p ButtonProps) Classes() string {
+    baseClasses := []string{
+        "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "disabled:pointer-events-none disabled:opacity-50",
+    }
+
+    variantClasses := map[string]string{
+        "default": "bg-primary text-primary-foreground hover:bg-primary/90",
+        "destructive": "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        "outline": "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        "ghost": "hover:bg-accent hover:text-accent-foreground",
+        "link": "text-primary underline-offset-4 hover:underline",
+    }
+
+    sizeClasses := map[string]string{
+        "default": "h-10 px-4 py-2",
+        "sm":      "h-9 rounded-md px-3",
+        "lg":      "h-11 rounded-md px-8",
+        "icon":    "h-10 w-10",
+    }
+
+    classes := append(baseClasses, variantClasses[p.Variant], sizeClasses[p.Size], p.ClassName)
+    return strings.Join(classes, " ")
+}
+
+templ Button(props ButtonProps) {
+    <button
+        type={props.Type}
+        class={ props.Classes() }
+        disabled?={ props.Disabled }
+    >
+        { children... }
+    </button>
+}
+
+// Predefined button variants
+templ DefaultButton(text string) {
+    @Button(ButtonProps{Variant: "default", Size: "default"}) {
+        { text }
+    }
+}
+
+templ FormSubmitButton (text string) {
+    @Button(ButtonProps{Variant: "default", Size: "default", Type: "submit"}) {
+        { text }
+    }
+
+}
+
+templ DestructiveButton(text string) {
+    @Button(ButtonProps{Variant: "destructive", Size: "default"}) {
+        { text }
+    }
+}
+
+templ OutlineButton(text string) {
+    @Button(ButtonProps{Variant: "outline", Size: "default"}) {
+        { text }
+    }
+}
+
+templ SecondaryButton(text string) {
+    @Button(ButtonProps{Variant: "secondary", Size: "default"}) {
+        { text }
+    }
+}
+
+templ GhostButton(text string) {
+    @Button(ButtonProps{Variant: "ghost", Size: "default"}) {
+        { text }
+    }
+}
+
+templ LinkButton(text string) {
+    @Button(ButtonProps{Variant: "link", Size: "default"}) {
+        { text }
+    }
+}

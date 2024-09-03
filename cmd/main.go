@@ -3,12 +3,17 @@ package main
 import (
 	"log"
 
+	"github.com/gokuls-codes/go-echo-starter/internal/database"
 	"github.com/gokuls-codes/go-echo-starter/internal/server"
 )
 
 func main() {
-	server := server.NewServer(":8080", nil)
-	err := server.Start()
+	db, err := database.NewDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+	server := server.NewServer(":8080", db)
+	err = server.Start()
 	
 	if err != nil {
 		log.Fatal(err)
