@@ -18,8 +18,6 @@ test:
 	@echo "Testing..."
 	@go test ./... -v
 
-
-
 # Clean the binary
 clean:
 	@echo "Cleaning..."
@@ -44,7 +42,7 @@ watch:
 
 .PHONY: all build run test clean
 
-migration:
+migrations:
 	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
 
 migrate-up:
