@@ -24,11 +24,16 @@ func GenerateSessionCookie(user *types.User, s types.UserStore) (*types.Session,
 	return sess, nil
 }
 
-func CheckIfLoggedIn(sessionToken string, s types.UserStore) bool {
+func CheckIfLoggedIn(sessionToken string, s types.UserStore) (*types.User, bool) {
 	sess, err := s.FindSessionBySessionId(sessionToken)
 	if err != nil {
 		log.Println(err.Error())
-		return false
+		return nil, false
 	}
-	return !sess.ExpiresAt.Before(time.Now())
+	u, err := s.GetUserById(sess.UserId)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, false
+	}
+	return u, !sess.ExpiresAt.Before(time.Now())
 }

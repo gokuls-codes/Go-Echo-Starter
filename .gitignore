@@ -32,3 +32,5 @@ main
 /node_modules
 
 database.sqlite3
+
+styles.css

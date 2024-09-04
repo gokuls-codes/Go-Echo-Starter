@@ -30,7 +30,8 @@ func (h *Handler) RegisterRoutes(group *echo.Group) {
 		cookie, err := c.Cookie(("session"))
 		if err == nil {
 			log.Println(cookie.Value)
-			if auth.CheckIfLoggedIn(cookie.Value, h.store) {
+			_, isLoggedIn := auth.CheckIfLoggedIn(cookie.Value, h.store)
+			if isLoggedIn{
 				return c.Redirect(http.StatusSeeOther, "/")
 			}
 		}
@@ -41,7 +42,8 @@ func (h *Handler) RegisterRoutes(group *echo.Group) {
 		cookie, err := c.Cookie(("session"))
 		if err == nil {
 			log.Println(cookie.Value)
-			if auth.CheckIfLoggedIn(cookie.Value, h.store) {
+			_, isLoggedIn := auth.CheckIfLoggedIn(cookie.Value, h.store)
+			if isLoggedIn{
 				return c.Redirect(http.StatusSeeOther, "/")
 			}
 		}
@@ -150,7 +152,5 @@ func (h *Handler) HandleLogin(c echo.Context) error {
 	cookie.Path = "/"
 	cookie.HttpOnly = true
 	c.SetCookie(cookie)
-
-	c.Set("user", u)
 	return c.String(200, "Logged in successfully")
 }

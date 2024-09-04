@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"net/http"
 
 	"github.com/gokuls-codes/go-echo-starter/internal/services/users"
 	"github.com/labstack/echo/v4"
@@ -36,6 +37,13 @@ func (s *Server) Start() error {
 	userStore := users.NewStore(s.db)
 	userHandler := users.NewHandler(userStore)
 	userHandler.RegisterRoutes(userGroup)
+
+	homeGroup := app.Group("/")
+	homeGroup.Use(customMiddleware.Auth(userStore))
+
+	homeGroup.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "hello world")
+	})
 
 	return app.Start(s.addr)
 }
