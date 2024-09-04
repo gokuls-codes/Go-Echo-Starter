@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -28,10 +27,24 @@ func NewHandler(store types.UserStore) *Handler {
 func (h *Handler) RegisterRoutes(group *echo.Group) {
 	
 	group.GET("/login", func(c echo.Context) error {
+		cookie, err := c.Cookie(("session"))
+		if err == nil {
+			log.Println(cookie.Value)
+			if auth.CheckIfLoggedIn(cookie.Value, h.store) {
+				return c.Redirect(http.StatusSeeOther, "/")
+			}
+		}
 		return utils.Render(c, pages.LoginPage(c.Get("theme") == "dark"))
 	})
 
 	group.GET("/register", func(c echo.Context) error {
+		cookie, err := c.Cookie(("session"))
+		if err == nil {
+			log.Println(cookie.Value)
+			if auth.CheckIfLoggedIn(cookie.Value, h.store) {
+				return c.Redirect(http.StatusSeeOther, "/")
+			}
+		}
 		return utils.Render(c, pages.RegisterPage(c.Get("theme") == "dark"))
 	})
 
@@ -45,20 +58,23 @@ func (h *Handler) HandleRegister(c echo.Context) error {
 
 	if err != nil {
 		c.Response().WriteHeader(http.StatusUnprocessableEntity)
-		return utils.Render(c, components.ErrorMessage(err.Error()))
+		log.Println(err.Error())
+		return utils.Render(c, components.ErrorMessage("Invalid data"))
 	}
 	
 	err = utils.Validate.Struct(p)
 	if err != nil {
 		errors := err.(validator.ValidationErrors)
+		log.Printf("Invalid payload %v", errors)
 
 		c.Response().WriteHeader(http.StatusUnprocessableEntity)
-		return utils.Render(c, components.ErrorMessage(fmt.Sprintf("Invalid payload %v", errors)))
+		return utils.Render(c, components.ErrorMessage("Invalid data"))
 	}
 
 	_, err = h.store.GetUserByEmail(p.Email) 
 
 	if err == nil {
+		log.Printf("Email %v already registered", p.Email)
 		c.Response().WriteHeader(http.StatusConflict)
 		return utils.Render(c, components.ErrorMessage("Email already exists"))
 	}
@@ -66,6 +82,7 @@ func (h *Handler) HandleRegister(c echo.Context) error {
 	hashedPassword, err := auth.HashPassword(p.Password)
 
 	if err != nil {
+		log.Println(err.Error())
 		c.Response().WriteHeader(http.StatusInternalServerError)
 		return utils.Render(c, components.ErrorMessage("Something went wrong"))
 	}
@@ -79,7 +96,6 @@ func (h *Handler) HandleRegister(c echo.Context) error {
 
 	if err != nil {
 		log.Println(err.Error())
-
 		c.Response().WriteHeader(http.StatusUnprocessableEntity)
 		return utils.Render(c, components.ErrorMessage("Something went wrong"))
 	}
@@ -88,5 +104,53 @@ func (h *Handler) HandleRegister(c echo.Context) error {
 }
 
 func (h *Handler) HandleLogin(c echo.Context) error {
-	return c.String(200, "Login")
+
+	payload:= new(types.LoginPayload)
+	err := c.Bind(payload)
+
+	if err != nil {
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	err = utils.Validate.Struct(payload)
+
+	if err != nil {
+		errors := err.(validator.ValidationErrors)
+		log.Printf("Invalid payload %v", errors)
+
+		c.Response().WriteHeader(http.StatusUnprocessableEntity)
+		return utils.Render(c, components.ErrorMessage("Invalid data"))
+	}
+
+	u, err := h.store.GetUserByEmail(payload.Email)
+	if err != nil {
+		log.Println(err.Error())
+		c.Response().WriteHeader(http.StatusUnprocessableEntity)
+		return utils.Render(c, components.ErrorMessage("Invalid email or password"))
+	}
+
+	if !auth.ComparePasswords(u.Password, []byte(payload.Password)) {
+		log.Println("Invalid email or password")
+		c.Response().WriteHeader(http.StatusUnprocessableEntity)
+		return utils.Render(c, components.ErrorMessage("Invalid email or password"))
+	}
+
+	sess, err := auth.GenerateSessionCookie(u, h.store)
+	if err != nil {
+		log.Println(err.Error())
+		c.Response().WriteHeader(http.StatusInternalServerError)
+		return utils.Render(c, components.ErrorMessage("Unable to login"))
+	}
+
+	log.Println(sess)
+	cookie := new(http.Cookie)
+	cookie.Name = "session"
+	cookie.Value = sess.SessionToken
+	cookie.Expires = sess.ExpiresAt
+	cookie.Path = "/"
+	cookie.HttpOnly = true
+	c.SetCookie(cookie)
+
+	c.Set("user", u)
+	return c.String(200, "Logged in successfully")
 }

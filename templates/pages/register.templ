@@ -16,9 +16,9 @@ templ RegisterPage(dark bool) {
             @components.Input(*components.DefaultInputProps("name", "name", "Name", "text", ""))
             @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", ""))
             @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", ""))
+            <div id="result"></div>
             @components.FormSubmitButton("Register")
             </form>
-            <div id="result"></div>
             <p class="text-sm">Have an account? Login <a href="/auth/login" class="underline underline-offset-2">here</a></p>
         </main>
         </div>

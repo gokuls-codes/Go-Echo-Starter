@@ -12,9 +12,10 @@ templ LoginPage(dark bool) {
         <main class=" p-6 rounded-md border-border border bg-card text-card-foreground flex flex-col items-center justify-center gap-4 w-[300px]">
             <h1 class=" text-2xl ">Go starter</h1>
             <h2 class="  ">Login</h2>
-            <form class="flex flex-col gap-6 w-full" action="/auth/login" method="POST">
+            <form class="flex flex-col gap-6 w-full" hx-post="/auth/login" hx-target="#result" >
             @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", ""))
             @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", ""))
+            <div id="result"></div>
             @components.FormSubmitButton("Login")
             </form>
             <p class="text-sm">New user? Register <a href="/auth/register" class="underline underline-offset-2">here</a></p>

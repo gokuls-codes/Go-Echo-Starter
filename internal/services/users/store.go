@@ -70,3 +70,40 @@ func (s *Store) GetUserById(id int) (*types.User, error) {
 	return user, nil
 	
 }
+
+func (s *Store) CreateSessionForUser(session *types.Session) error {
+	_, err := s.db.Exec("INSERT INTO sessions (user_id, session_token, expires_at) VALUES (?, ?, ?)", session.UserId, session.SessionToken, session.ExpiresAt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Store) FindSessionBySessionId(sessionToken string) (*types.Session, error) {
+
+	rows, err := s.db.Query("SELECT * FROM sessions WHERE session_token = ?", sessionToken)
+	if (err != nil) {
+		return nil, err
+	}
+	sess := new(types.Session)
+	for rows.Next() {
+		sess, err = scanRowIntoSession(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if sess.ID == 0 {
+		return nil, fmt.Errorf("session not found")
+	}
+
+	return sess, nil
+}
+
+func scanRowIntoSession(rows *sql.Rows) (*types.Session, error) {
+	s := new(types.Session)
+	err := rows.Scan(&s.ID, &s.UserId, &s.SessionToken, &s.ExpiresAt)
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}

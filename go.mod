@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.2.771
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/golang-migrate/migrate/v4 v4.17.1
+	github.com/google/uuid v1.4.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/mattn/go-sqlite3 v1.14.22
 	golang.org/x/crypto v0.26.0

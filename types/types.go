@@ -7,6 +7,8 @@ type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 	GetUserById(id int) (*User, error)
 	CreateUser(user *User) error
+	CreateSessionForUser (session *Session) error
+	FindSessionBySessionId(sessionToken string) (*Session, error)
 }
 
 type LoginPayload struct {
@@ -26,4 +28,11 @@ type User struct {
 	Email string`json:"email"`
 	Password string`json:"password"`
 	CreatedAt time.Time `json:"createdAt"`
+}
+
+type Session struct {
+	ID int `json:"id"`
+	SessionToken string `json:"session"`
+	UserId int `json:"userId"`
+	ExpiresAt time.Time `json:"expiresAt"`
 }
