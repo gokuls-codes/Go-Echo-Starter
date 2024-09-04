@@ -6,12 +6,12 @@ all: build
 build:
 	@echo "Building..."
 	@templ generate
-	@tailwindcss -i assets/css/input.css -o assets/css/styles.css
+	@npx tailwindcss -i assets/css/input.css -o assets/css/styles.css
 	@go build -o main cmd/main.go
 
 # Run the application
 run:
-	@go run cmd/api/main.go
+	@go run cmd/main.go
 
 # Test the application
 test:
