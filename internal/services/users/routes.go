@@ -44,25 +44,30 @@ func (h *Handler) HandleRegister(c echo.Context) error {
 	err := c.Bind(p)
 
 	if err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		c.Response().WriteHeader(http.StatusUnprocessableEntity)
+		return utils.Render(c, components.ErrorMessage(err.Error()))
 	}
 	
 	err = utils.Validate.Struct(p)
 	if err != nil {
 		errors := err.(validator.ValidationErrors)
-		return c.String(http.StatusBadRequest, fmt.Sprintf("Invalid payload %v", errors))
+
+		c.Response().WriteHeader(http.StatusUnprocessableEntity)
+		return utils.Render(c, components.ErrorMessage(fmt.Sprintf("Invalid payload %v", errors)))
 	}
 
 	_, err = h.store.GetUserByEmail(p.Email) 
 
 	if err == nil {
-		return c.String(http.StatusConflict, fmt.Sprintf("User with email %s already exists", p.Email))
+		c.Response().WriteHeader(http.StatusConflict)
+		return utils.Render(c, components.ErrorMessage("Email already exists"))
 	}
 
 	hashedPassword, err := auth.HashPassword(p.Password)
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "Internal Server Error")
+		c.Response().WriteHeader(http.StatusInternalServerError)
+		return utils.Render(c, components.ErrorMessage("Something went wrong"))
 	}
 
 	err = h.store.CreateUser(&types.User{
@@ -74,7 +79,9 @@ func (h *Handler) HandleRegister(c echo.Context) error {
 
 	if err != nil {
 		log.Println(err.Error())
-		return c.String(http.StatusInternalServerError, "Internal Server Error")
+
+		c.Response().WriteHeader(http.StatusUnprocessableEntity)
+		return utils.Render(c, components.ErrorMessage("Something went wrong"))
 	}
 
 	return utils.Render(c, components.SuccessMessage())
