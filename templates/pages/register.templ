@@ -12,10 +12,10 @@ templ RegisterPage(dark bool) {
         <main class=" p-6 rounded-md border-border border bg-card text-card-foreground flex flex-col items-center justify-center gap-4 w-[300px]">
             <h1 class=" text-2xl ">Go starter</h1>
             <h2 class="  ">Register</h2>
-            <form class="flex flex-col gap-6 w-full" hx-post="/auth/register" hx-target="#result">
-            @components.Input(*components.DefaultInputProps("name", "name", "Name", "text", ""))
-            @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", ""))
-            @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", ""))
+            <form class="flex flex-col gap-6 w-full" hx-post="/auth/register" hx-target="#result" autocomplete="on">
+            @components.Input(*components.DefaultInputProps("name", "name", "Name", "text", "", "name"))
+            @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", "", "email"))
+            @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", "", "password"))
             <div id="result"></div>
 
             @components.FormSubmitButton() {

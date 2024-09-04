@@ -13,8 +13,8 @@ templ LoginPage(dark bool) {
             <h1 class=" text-2xl ">Go starter</h1>
             <h2 class="  ">Login</h2>
             <form class="flex flex-col gap-6 w-full" hx-post="/auth/login" hx-target="#result" hx-indicator="#loading" >
-            @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", ""))
-            @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", ""))
+            @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", "", "email"))
+            @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", "", "password"))
             <div id="result"></div>
             @components.FormSubmitButton() {
                 <span>Login</span>

@@ -10,9 +10,10 @@ type InputProps struct {
     Disabled    bool
     Error       string
     ClassName string
+    AutoComplete string
 }
 
-func DefaultInputProps(id string, name string, placeholder string, inputType string, className string) *InputProps {
+func DefaultInputProps(id string, name string, placeholder string, inputType string, className string, autocomplete string) *InputProps {
     return &InputProps{
         ID: id,
         Name: name,
@@ -21,6 +22,7 @@ func DefaultInputProps(id string, name string, placeholder string, inputType str
         Disabled: false,
         ClassName: className,
         Required: true,
+        AutoComplete: autocomplete,
     }
 }
 
@@ -34,6 +36,7 @@ templ Input(props InputProps) {
                 props.ClassName,
             }
             placeholder={ props.Placeholder }
+            autocomplete={props.AutoComplete}
             value={ props.Value }
             required?={ props.Required }
             disabled?={ props.Disabled }
