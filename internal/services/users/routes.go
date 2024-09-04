@@ -32,7 +32,7 @@ func (h *Handler) RegisterRoutes(group *echo.Group) {
 			log.Println(cookie.Value)
 			_, isLoggedIn := auth.CheckIfLoggedIn(cookie.Value, h.store)
 			if isLoggedIn{
-				return c.Redirect(http.StatusSeeOther, "/")
+				return c.Redirect(http.StatusFound, "/")
 			}
 		}
 		return utils.Render(c, pages.LoginPage(c.Get("theme") == "dark"))
@@ -44,7 +44,7 @@ func (h *Handler) RegisterRoutes(group *echo.Group) {
 			log.Println(cookie.Value)
 			_, isLoggedIn := auth.CheckIfLoggedIn(cookie.Value, h.store)
 			if isLoggedIn{
-				return c.Redirect(http.StatusSeeOther, "/")
+				return c.Redirect(http.StatusFound, "/")
 			}
 		}
 		return utils.Render(c, pages.RegisterPage(c.Get("theme") == "dark"))
@@ -152,5 +152,7 @@ func (h *Handler) HandleLogin(c echo.Context) error {
 	cookie.Path = "/"
 	cookie.HttpOnly = true
 	c.SetCookie(cookie)
-	return c.String(200, "Logged in successfully")
+
+	c.Response().Header().Set("HX-Redirect", "/")
+	return c.String(http.StatusOK, "Logge in successfully")
 }

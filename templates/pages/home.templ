@@ -1,0 +1,16 @@
+package pages
+
+import (
+    "github.com/gokuls-codes/go-echo-starter/templates"
+
+)
+
+templ HomePage(dark bool, name string) {
+    @templates.Base(dark) {
+        <div class=" min-h-screen">
+            <main class=" container mx-auto p-6">
+                Hi, {name}
+            </main>
+        </div>
+    }
+}

@@ -12,11 +12,16 @@ templ LoginPage(dark bool) {
         <main class=" p-6 rounded-md border-border border bg-card text-card-foreground flex flex-col items-center justify-center gap-4 w-[300px]">
             <h1 class=" text-2xl ">Go starter</h1>
             <h2 class="  ">Login</h2>
-            <form class="flex flex-col gap-6 w-full" hx-post="/auth/login" hx-target="#result" >
+            <form class="flex flex-col gap-6 w-full" hx-post="/auth/login" hx-target="#result" hx-indicator="#loading" >
             @components.Input(*components.DefaultInputProps("email", "email", "Email", "email", ""))
             @components.Input(*components.DefaultInputProps("password", "password", "Password", "password", ""))
             <div id="result"></div>
-            @components.FormSubmitButton("Login")
+            @components.FormSubmitButton() {
+                <span>Login</span>
+                <div class="w-5 h-5 htmx-indicator" id="loading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-circle animate-spin w-full h-full"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                </div>
+            }
             </form>
             <p class="text-sm">New user? Register <a href="/auth/register" class="underline underline-offset-2">here</a></p>
         </main>

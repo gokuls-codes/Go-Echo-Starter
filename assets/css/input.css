@@ -58,3 +58,11 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+.htmx-indicator {
+  display: none;
+}
+
+.htmx-request.htmx-indicator {
+  display: inline;
+}

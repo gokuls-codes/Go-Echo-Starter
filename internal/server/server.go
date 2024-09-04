@@ -2,9 +2,11 @@ package server
 
 import (
 	"database/sql"
-	"net/http"
 
 	"github.com/gokuls-codes/go-echo-starter/internal/services/users"
+	"github.com/gokuls-codes/go-echo-starter/templates/pages"
+	"github.com/gokuls-codes/go-echo-starter/types"
+	"github.com/gokuls-codes/go-echo-starter/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -38,11 +40,11 @@ func (s *Server) Start() error {
 	userHandler := users.NewHandler(userStore)
 	userHandler.RegisterRoutes(userGroup)
 
-	homeGroup := app.Group("/")
+	homeGroup := app.Group("")
 	homeGroup.Use(customMiddleware.Auth(userStore))
 
 	homeGroup.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "hello world")
+		return utils.Render(c, pages.HomePage(c.Get("theme")=="dark", c.Get("user").(*types.User).Name))
 	})
 
 	return app.Start(s.addr)

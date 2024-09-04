@@ -56,9 +56,9 @@ templ DefaultButton(text string) {
     }
 }
 
-templ FormSubmitButton (text string) {
-    @Button(ButtonProps{Variant: "default", Size: "default", Type: "submit"}) {
-        { text }
+templ FormSubmitButton () {
+    @Button(ButtonProps{Variant: "default", Size: "default", Type: "submit", ClassName: " space-x-1"}) {
+        { children... }
     }
 
 }

@@ -16,11 +16,11 @@ func Auth(store types.UserStore) echo.MiddlewareFunc {
 			cookie, err := c.Cookie("session")
 			if err != nil {
 				log.Println(err.Error())
-				return c.Redirect(http.StatusSeeOther, "/auth/login")
+				return c.Redirect(http.StatusFound, "/auth/login")
 			}
 			user, loggedIn := auth.CheckIfLoggedIn(cookie.Value, store)
 			if !loggedIn {
-				return c.Redirect(http.StatusSeeOther, "/auth/login")
+				return c.Redirect(http.StatusFound, "/auth/login")
 			}
 			c.Set("user", user)
 			return next(c)
