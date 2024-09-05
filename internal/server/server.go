@@ -33,6 +33,10 @@ func (s *Server) Start() error {
 
 	app.Static("/static", "assets")
 
+	app.GET("/robots.txt", func(c echo.Context) error {
+		return c.File("robots.txt")
+	})
+
 	app.Use(customMiddleware.Theme)
 
 	userGroup := app.Group("/auth")
